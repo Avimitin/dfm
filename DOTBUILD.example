@@ -1,0 +1,26 @@
+name="nvim"
+descriptions="An example file showing how to manage the neovim configuration"
+depends_arch_linux=('nvim-git' 'ripgrep' 'fzf' 'fd' 'git-delta')
+url="https://github.com/Avimitin/nvim"
+
+# dotfile/
+#   * nvim/
+#       * DOTBUILD
+#       * config/     <- whatever name you like
+#           * init.lua
+#           *  ...
+#   * .dfm
+
+prepare() {
+  echo "Pull the submodule"
+  git submodule update --init
+}
+
+install() {
+  ln -sf "${srcdir}/config" "${HOME}/.config/nvim"
+}
+
+post-install() {
+  echo "Downloading plugins"
+  nvim --headless -c "au User PackerComplete quitall"
+}
