@@ -45,10 +45,10 @@ Name of the current step.
 
 List of actions. Current available actions: `mkdir`, `copy`, `execute`, `symlink`, `remove`.
 
-### key
+### env
 
-Extra non-reserved keys are still store in the runtime. It's useful to define some values for reuse proposal.
-You can reuse the value by syntax: `"${extra-key}"`.
+Defined runtime expanded value.
+You can reuse the value by syntax: `"${key}"`.
 
 ---
 

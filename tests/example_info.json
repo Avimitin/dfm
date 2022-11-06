@@ -19,8 +19,10 @@
   "steps": [
     {
       "name": "prepare",
-      "extra-key": "reusable-value",
-      "packer_dir":  "~/.local/share/nvim/site/pack/packer/opt/",
+      "env": {
+        "extra-key": "reusable-value",
+        "packer_dir":  "~/.local/share/nvim/site/pack/packer/opt/"
+      },
       "actions": [
         {"mkdir": ["~/.config", "$packer_dir", "~/.cache"]},
         {"copy": ["./extra", "$packer_dir"]}
@@ -28,7 +30,9 @@
     },
     {
       "name": "install",
-      "nvim_cfg_dir": "~/.config/nvim",
+      "env": {
+        "nvim_cfg_dir": "~/.config/nvim"
+      },
       "actions": [
         { "symlink": ["$srcdir", "nvim_cfg_dir"] },
         { "execute": ["cd ~/.config/nvim", "patch -p0 -Ni ${src_dir}/SomePatch" ] },
