@@ -8,8 +8,7 @@ Create a new directory, separate configuration to different directory and group
 them by who using them. Like `.zshrc`, `.zshenv` should all go inside `zsh`
 directory, `.bashrc` should place into `bash`, `~/.config/nvim` just placed as `nvim`.
 
-In each folder, create a script file and called it `.build`, `DOTBUILD` is
-also recognized. And finally, put the `.dfm` executable script at the root of
-the dotfile directory, and run `.dfm init` to do all the jobs.
+In each folder, create a JSON file and named it `DOTINFO`.
+Run `dfm init` to get all configuration done.
 
-> See [DOTBUILD SPECIFICATION](./DOTBUILD.md) for the grammar
+> See [DOTINFO](./tests/example_info.json) for the example
