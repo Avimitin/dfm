@@ -17,6 +17,22 @@ Current available os: `arch_linux`, `alpine`, `ubuntu`
 Required resources for preparing the dotfile.
 It should at least contains the dotfiles.
 
+### path
+
+A string value indicate the local path.
+
+### url
+
+A remote url for resource fetching
+
+### git
+
+A git fetchable url
+
+### alias
+
+A new name for the downloaded resources.
+
 ## steps
 
 List of step should be done one by one.

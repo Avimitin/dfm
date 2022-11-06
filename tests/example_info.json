@@ -5,9 +5,15 @@
     "alpine": ["neovim-git", "ripgrep", "alpine-sdk", "git"]
   },
   "sources": [
-    "./*",
-    "SomePatch::https://github.com/SomeBody/SomePlugin/pull/114514.diff",
-    "extra::git+https://github.com/SomeBody/ExtraPlugin.git"
+    { "path": "./*" },
+    {
+      "alias": "SomePatch",
+      "url": "https://github.com/SomeBody/SomePlugin/pull/114514.diff"
+    },
+    {
+      "alias": "extra",
+      "git": "https://github.com/SomeBody/ExtraPlugin.git"
+    }
   ],
 
   "steps": [
