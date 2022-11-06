@@ -17,13 +17,7 @@ pub enum AvailableOS {
 pub type Dependencies = HashMap<AvailableOS, Vec<String>>;
 
 /// Different types of sources, take different action for fetching them
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum Sources {
-    Local(String),
-    Remote(String),
-    Git(String),
-}
+pub type Source = HashMap<String, String>;
 
 /// Wrapper for file system operation
 #[derive(Debug, Deserialize)]
@@ -43,9 +37,9 @@ pub struct Step {
     pub name: Option<String>,
     /// List of action to be done
     pub actions: Vec<Action>,
-    pub extra_keys: Option<HashMap<String, String>>,
+    #[serde(flatten)]
+    pub extra: HashMap<String, String>,
 }
-
 
 /// Build time information for the dotfile
 #[derive(Debug, Deserialize)]
@@ -55,7 +49,7 @@ pub struct DotFileInstallInfo {
     /// List of dependencies that pending downloaded by system packager
     pub depends: Dependencies,
     /// List of files to be fetched
-    pub sources: Vec<String>,
+    pub sources: Vec<Source>,
     /// List of action to be done
     pub steps: Vec<Step>
 }
