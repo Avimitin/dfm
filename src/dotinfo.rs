@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use serde::Deserialize;
+use serde::{de::Deserializer, Deserialize};
 
 /// Currently verified and tested usable distribution
 #[derive(PartialEq, Eq, Hash, Debug, Deserialize)]
@@ -17,7 +17,64 @@ pub enum AvailableOS {
 pub type Dependencies = HashMap<AvailableOS, Vec<String>>;
 
 /// Different types of sources, take different action for fetching them
-pub type Source = HashMap<String, String>;
+#[derive(Debug)]
+pub enum FetchType {
+    Git(String),
+    Remote(String),
+    Local(std::path::PathBuf),
+}
+
+#[derive(Debug)]
+pub struct Source {
+    pub fetch_type: FetchType,
+    pub alias: Option<String>,
+}
+
+impl<'de> Deserialize<'de> for Source {
+    fn deserialize<D>(d: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        use serde::de::Error;
+        use std::path::PathBuf;
+        use FetchType::*;
+
+        let map: HashMap<String, String> = Deserialize::deserialize(d)?;
+
+        let alias = map.get("alias").map(|s| s.to_string());
+
+        if let Some(path) = map.get("path") {
+            return Ok(Source {
+                alias,
+                fetch_type: Local(PathBuf::from(path)),
+            });
+        }
+
+        if let Some(remote) = map.get("url") {
+            return Ok(Source {
+                alias,
+                fetch_type: Remote(remote.to_string()),
+            });
+        }
+
+        if let Some(git) = map.get("git") {
+            return Ok(Source {
+                alias,
+                fetch_type: Git(git.to_string()),
+            });
+        }
+
+        let lefted = map.keys().next();
+        if lefted.is_none() {
+            return Err(D::Error::custom("You should at least specify one key"));
+        }
+
+        Err(D::Error::custom(format!(
+            "Unexpected key: {}",
+            lefted.unwrap()
+        )))
+    }
+}
 
 /// Wrapper for file system operation
 #[derive(Debug, Deserialize)]
@@ -37,8 +94,7 @@ pub struct Step {
     pub name: Option<String>,
     /// List of action to be done
     pub actions: Vec<Action>,
-    #[serde(flatten)]
-    pub extra: HashMap<String, String>,
+    pub env: Option<HashMap<String, String>>,
 }
 
 /// Build time information for the dotfile
@@ -51,5 +107,5 @@ pub struct DotFileInstallInfo {
     /// List of files to be fetched
     pub sources: Vec<Source>,
     /// List of action to be done
-    pub steps: Vec<Step>
+    pub steps: Vec<Step>,
 }
