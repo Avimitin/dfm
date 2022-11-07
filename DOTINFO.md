@@ -1,5 +1,7 @@
 # DOTINFO SPECIFICATION
 
+DOTINFO file should follow the [`hjson`](https://hjson.github.io/) spec.
+
 ## name
 
 The current configuration project name.

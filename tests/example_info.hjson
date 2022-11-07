@@ -1,0 +1,65 @@
+{
+  // The name of the configuration build information file
+  name: nvim
+
+  // Dependencies that need to be downloaded
+  depends: {
+    arch_linux: ["neovim-git", "ripgrep", "git"]
+    alpine: ["neovim-git", "ripgrep", "alpine-sdk", "git"]
+  }
+
+  // All the files pending to be installed
+  sources: [
+    { path: "./*" }
+
+    {
+      alias: SomePatch,
+      url: "https://github.com/SomeBody/SomePlugin/pull/114514.diff"
+    }
+
+    {
+      alias: extra,
+      git: "https://github.com/SomeBody/ExtraPlugin.git"
+    }
+  ]
+
+  // The install steps
+  steps: [
+    // step 1
+    {
+      // Name of the current step, useful for logging
+      name: prepare
+
+      // Extra key-value to be reuse in runtime
+      env: {
+        extra-key: "reusable-value",
+        packer_dir:  "~/.local/share/nvim/site/pack/packer/opt/"
+      }
+
+      // List of actions need to be done
+      actions: [
+        { mkdir: ["~/.config", "$packer_dir", "~/.cache"] }
+        { copy: ["./extra", "$packer_dir"] }
+      ]
+    }
+
+    {
+      name: install,
+      env: {
+        nvim_cfg_dir: "~/.config/nvim"
+      },
+      actions: [
+        { symlink: ["$srcdir", "nvim_cfg_dir"] },
+        { execute: ["cd ~/.config/nvim", "patch -p0 -Ni ${src_dir}/SomePatch" ] },
+        { copy: ["${nvim_cfg_dir}/custom.example.lua", "${nvim_cfg_dir}/custom.lua"]}
+      ]
+    }
+
+    {
+      name: post-install,
+      actions: [
+        {execute: ["nvim --headless -c 'autocmd User PackerComplete quitall'"]}
+      ]
+    }
+  ]
+}
